@@ -33,7 +33,7 @@ export const ContactSheetView: React.FC<ContactSheetViewProps> = ({
                 DARKROOM CONTACT SHEET · {roll.name.toUpperCase()}
               </h3>
               <p className="text-[11px] text-stone-400 font-mono">
-                {roll.filmStock} · {roll.camera} · {entries.length} exposures logged (Unlimited)
+                {roll.filmStock} · {roll.camera} · {entries.length} exposures logged
               </p>
             </div>
           </div>
@@ -97,6 +97,18 @@ export const ContactSheetView: React.FC<ContactSheetViewProps> = ({
                   {/* Frame Body Preview */}
                   {hasData && entry ? (
                     <div className="space-y-1 text-[11px] font-mono text-stone-300 my-1">
+                      {entry.imageAttachment && (
+                        <div className="relative w-full aspect-square max-h-24 rounded overflow-hidden border border-stone-800 bg-black/60 my-1">
+                          <img
+                            src={entry.imageAttachment}
+                            alt={`Frame ${num} thumbnail`}
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute bottom-0.5 right-1 text-[8px] bg-black/70 px-1 rounded text-stone-300 font-mono">
+                            512px
+                          </span>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between text-stone-400 text-[10px]">
                         <span className="text-amber-200 font-bold">{entry.fStop || '—'}</span>
                         <span>{entry.shutterSpeed || '—'}</span>
@@ -136,7 +148,7 @@ export const ContactSheetView: React.FC<ContactSheetViewProps> = ({
             ))}
           </div>
           <span className="text-[10px] text-amber-500/80 font-mono">
-            ∞ UNLIMITED CONTINUOUS EXPOSURES
+            CONTINUOUS EXPOSURES
           </span>
         </div>
       </div>

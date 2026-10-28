@@ -9,6 +9,7 @@ import {
   COMMON_CAMERAS,
   COMMON_LENSES
 } from '../types/notebook';
+import { create512Thumbnail } from '../utils/imageUtils';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -29,7 +30,12 @@ import {
   Image as ImageIcon,
   RotateCcw,
   Sliders,
-  Focus
+  Focus,
+  Upload,
+  Trash2,
+  Maximize2,
+  X,
+  Loader2
 } from 'lucide-react';
 
 interface NotebookPageProps {
@@ -64,6 +70,28 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
   const [isLocating, setIsLocating] = useState(false);
   const [activeLineSpeech, setActiveLineSpeech] = useState<string | null>(null);
   const [showHandwrittenCanvas, setShowHandwrittenCanvas] = useState(false);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const [previewEnlarged, setPreviewEnlarged] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsProcessingImage(true);
+    setImageError(null);
+    try {
+      const thumb512 = await create512Thumbnail(file);
+      onUpdateEntry({ imageAttachment: thumb512 });
+    } catch (err: any) {
+      setImageError(err?.message || 'Failed to convert image to 512×512 thumbnail');
+    } finally {
+      setIsProcessingImage(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   // Line Speech Recognition instance
   const lineRecognitionRef = React.useRef<any>(null);
@@ -194,10 +222,9 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
                   else onUpdateEntry({ frameNumber: val });
                 }
               }}
-              title="Click or type to change Frame Number (unlimited exposures)"
+              title="Click or type to change Frame Number"
               className="w-11 bg-[#25201b] border border-amber-800/60 rounded text-center text-amber-300 font-bold font-mono focus:bg-black focus:outline-none focus:ring-1 focus:ring-amber-500 py-0.5"
             />
-            <span className="text-amber-500/80 font-mono text-[10px]">· ∞</span>
           </div>
 
           <div className="flex items-center gap-1 text-stone-300">
@@ -266,6 +293,31 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
             </div>
 
             <div className="flex items-center gap-1.5">
+              {/* Hidden file input for 512x512 thumbnail image upload */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageFileChange}
+              />
+
+              {/* Attach photo trigger */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isProcessingImage}
+                className="px-2 py-1 rounded-md bg-[#eee7d8] hover:bg-[#e4dcce] border border-[#d2c7b5] text-stone-800 text-[11px] font-medium flex items-center gap-1 transition-colors disabled:opacity-50"
+                title="Attach photo (converts to 512×512 thumbnail)"
+              >
+                {isProcessingImage ? (
+                  <Loader2 className="w-3 h-3 text-amber-900 animate-spin" />
+                ) : (
+                  <ImageIcon className="w-3 h-3 text-amber-900" />
+                )}
+                <span>{entry.imageAttachment ? 'Photo' : 'Attach'}</span>
+              </button>
+
               {/* Handwriting trigger */}
               <button
                 onClick={onOpenHandwriting}
@@ -295,10 +347,8 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
               <div>
                 <div className="flex items-center justify-between text-[10px] font-semibold text-stone-600 mb-0.5">
                   <span className="flex items-center gap-1 text-stone-700">
-                    <Focus className="w-3 h-3 text-amber-900" />
-                    FRAME
+                    <Focus className="w-3.5 h-3.5 text-amber-900" />
                   </span>
-                  <span className="text-[10px] text-amber-900 font-bold">∞ Unlimited</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <input
@@ -322,16 +372,16 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
               <div>
                 <div className="flex items-center justify-between text-[10px] font-semibold text-stone-600 mb-0.5">
                   <span className="flex items-center gap-1 text-stone-700">
-                    <Camera className="w-3 h-3 text-amber-900" />
-                    CAMERA
+                    <Camera className="w-3.5 h-3.5 text-amber-900" />
                   </span>
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-1">
                     <button
                       type="button"
                       onClick={() => setActivePicker(activePicker === 'camera' ? null : 'camera')}
-                      className="text-[10px] text-amber-900 hover:underline px-0.5"
+                      title="Select camera from list"
+                      className="p-0.5 rounded text-stone-500 hover:text-amber-900"
                     >
-                      Presets
+                      <Layers className="w-3 h-3" />
                     </button>
                     <button
                       type="button"
@@ -358,16 +408,16 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
               <div>
                 <div className="flex items-center justify-between text-[10px] font-semibold text-stone-600 mb-0.5">
                   <span className="flex items-center gap-1 text-stone-700">
-                    <Aperture className="w-3 h-3 text-amber-900" />
-                    LENS
+                    <Aperture className="w-3.5 h-3.5 text-amber-900" />
                   </span>
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-1">
                     <button
                       type="button"
                       onClick={() => setActivePicker(activePicker === 'lens' ? null : 'lens')}
-                      className="text-[10px] text-amber-900 hover:underline px-0.5"
+                      title="Select lens from list"
+                      className="p-0.5 rounded text-stone-500 hover:text-amber-900"
                     >
-                      Presets
+                      <Layers className="w-3 h-3" />
                     </button>
                     <button
                       type="button"
@@ -717,9 +767,10 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
                     </button>
                     <button
                       onClick={() => setActivePicker(activePicker === 'film' ? null : 'film')}
-                      className="text-[10px] text-amber-900 hover:underline px-1 py-0.5"
+                      title="Select film stock from list"
+                      className="p-0.5 rounded text-stone-500 hover:text-amber-900"
                     >
-                      Presets
+                      <Layers className="w-3 h-3" />
                     </button>
                     <button
                       onClick={() => startLineSpeech('filmSpeed')}
@@ -788,6 +839,110 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
             </div>
           )}
 
+          {/* IMAGE ATTACHMENT SECTION (CONVERTED TO 512x512 THUMBNAIL) */}
+          <div className="pt-2 border-t border-stone-300/70">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-stone-600 mb-2">
+              <span className="flex items-center gap-1.5 font-mono">
+                <ImageIcon className="w-3.5 h-3.5 text-amber-900" />
+                PHOTO ATTACHMENT (512×512 THUMBNAIL)
+              </span>
+              {entry.imageAttachment && (
+                <span className="text-[10px] font-mono text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300">
+                  512×512 px
+                </span>
+              )}
+            </div>
+
+            {isProcessingImage ? (
+              <div className="py-6 px-4 bg-[#f1ebe0] rounded-xl border border-dashed border-amber-900/40 flex flex-col items-center justify-center gap-2 text-stone-600">
+                <Loader2 className="w-6 h-6 text-amber-900 animate-spin" />
+                <span className="text-xs font-mono">Cropping & converting to 512×512 square thumbnail...</span>
+              </div>
+            ) : entry.imageAttachment ? (
+              <div className="bg-[#f9f5ed] p-3 rounded-xl border border-[#d9ceb9] shadow-xs flex flex-col sm:flex-row items-center gap-4">
+                {/* Polaroid / Test Print style thumbnail */}
+                <div 
+                  onClick={() => setPreviewEnlarged(true)}
+                  className="cursor-pointer group relative p-1.5 bg-white rounded-lg shadow-sm border border-stone-300/80 hover:shadow-md transition-shadow shrink-0"
+                  title="Click to view full 512×512 preview"
+                >
+                  <img
+                    src={entry.imageAttachment}
+                    alt="Exposure thumbnail"
+                    className="w-32 h-32 sm:w-36 sm:h-36 object-cover rounded border border-stone-200"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded transition-opacity text-white text-xs font-mono gap-1">
+                    <Maximize2 className="w-4 h-4" />
+                    <span>Enlarge</span>
+                  </div>
+                  <div className="text-[9px] font-mono text-center text-stone-500 pt-1">
+                    512 × 512 px
+                  </div>
+                </div>
+
+                <div className="flex-1 space-y-2 text-center sm:text-left">
+                  <div>
+                    <h4 className="text-xs font-semibold text-stone-900 font-mono">Attached Exposure Reference</h4>
+                    <p className="text-[11px] text-stone-600 leading-snug">
+                      Converted to 512×512 square darkroom thumbnail and saved to this frame log.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-2.5 py-1 rounded bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-medium flex items-center gap-1.5 border border-stone-300 transition-colors cursor-pointer"
+                    >
+                      <Upload className="w-3 h-3 text-stone-700" />
+                      <span>Replace</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewEnlarged(true)}
+                      className="px-2.5 py-1 rounded bg-[#eee7d8] hover:bg-[#e4dcce] text-stone-800 text-xs font-medium flex items-center gap-1.5 border border-[#d2c7b5] transition-colors cursor-pointer"
+                    >
+                      <Maximize2 className="w-3 h-3 text-stone-700" />
+                      <span>View 512px</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onUpdateEntry({ imageAttachment: undefined })}
+                      className="px-2.5 py-1 rounded bg-red-50 hover:bg-red-100 text-red-700 text-xs font-medium flex items-center gap-1.5 border border-red-200 transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3 h-3 text-red-600" />
+                      <span>Remove</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full py-3.5 px-3 bg-[#f3ecdd]/60 hover:bg-[#ece3d1] border-2 border-dashed border-[#cdbe9f] rounded-xl flex flex-col items-center justify-center gap-1.5 transition-colors group cursor-pointer text-stone-700"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#e4dbca] group-hover:bg-[#dbd0bd] flex items-center justify-center text-amber-900 transition-colors">
+                  <ImageIcon className="w-4 h-4" />
+                </div>
+                <div className="text-center">
+                  <span className="text-xs font-semibold text-stone-800 block">
+                    Attach Reference Photo / Scan
+                  </span>
+                  <span className="text-[10px] text-stone-500 font-mono">
+                    Auto-converts into 512×512 square thumbnail
+                  </span>
+                </div>
+              </button>
+            )}
+
+            {imageError && (
+              <div className="mt-1.5 text-[11px] text-red-700 bg-red-50 border border-red-200 px-2 py-1 rounded">
+                {imageError}
+              </div>
+            )}
+          </div>
+
           {/* Quick Input Method Badge */}
           <div className="pt-2 border-t border-stone-300/60 flex items-center justify-between text-[10px] text-stone-500 font-mono">
             <span>Method: {entry.inputMethod ? entry.inputMethod.toUpperCase() : 'MANUAL'}</span>
@@ -838,6 +993,48 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
+
+      {/* 512x512 Image Preview Modal */}
+      {previewEnlarged && entry.imageAttachment && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-xs"
+          onClick={() => setPreviewEnlarged(false)}
+        >
+          <div 
+            className="bg-[#24211c] border border-stone-700 p-4 rounded-2xl max-w-md w-full shadow-2xl space-y-3"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between text-stone-300 font-mono text-xs">
+              <span className="flex items-center gap-1.5">
+                <ImageIcon className="w-4 h-4 text-amber-400" />
+                Frame #{entry.frameNumber} · 512×512 Thumbnail
+              </span>
+              <button 
+                onClick={() => setPreviewEnlarged(false)}
+                className="p-1 rounded text-stone-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="w-full aspect-square bg-black rounded-lg overflow-hidden border border-stone-800 flex items-center justify-center">
+              <img
+                src={entry.imageAttachment}
+                alt={`Frame ${entry.frameNumber} full 512x512 preview`}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-stone-400 font-mono pt-1">
+              <span>Resolution: 512 × 512 px (1:1)</span>
+              <button
+                onClick={() => setPreviewEnlarged(false)}
+                className="px-3 py-1 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded text-xs font-sans cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

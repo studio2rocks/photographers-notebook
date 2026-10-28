@@ -117,7 +117,7 @@ export const RollManagerModal: React.FC<RollManagerModalProps> = ({
                           <span>·</span>
                           <span>{roll.filmStock} ({roll.iso})</span>
                           <span>·</span>
-                          <span>{roll.isUnlimited || (roll.totalFrames && roll.totalFrames > 100) ? '∞ Unlimited exp' : `${roll.totalFrames} exp`}</span>
+                          <span>{roll.isUnlimited || (roll.totalFrames && roll.totalFrames > 100) ? 'Continuous' : `${roll.totalFrames} exp`}</span>
                         </div>
                       </div>
 
@@ -193,7 +193,7 @@ export const RollManagerModal: React.FC<RollManagerModalProps> = ({
                     onChange={e => setTotalFrames(parseInt(e.target.value, 10))}
                     className="w-full px-3 py-2 text-xs bg-white border border-stone-300 rounded-lg font-mono"
                   >
-                    <option value="999999">∞ Unlimited Exposures (Continuous field log)</option>
+                    <option value="999999">Continuous field log</option>
                     <option value="36">36 exposures (Standard 35mm roll)</option>
                     <option value="24">24 exposures (Short 35mm roll)</option>
                     <option value="12">12 exposures (120 6x6 Medium Format)</option>

@@ -31,13 +31,18 @@ Every frame is recorded on realistic ruled ivory paper with:
    - Gemini Vision OCR reads handwritten shorthand or cursive notes and transcribes them onto the notebook lines.
    - Option to preserve and display the original handwritten sketch/drawing right on the notebook page.
 
-### 4. Built-In Photography Darkroom Tools
-- **Darkroom Contact Sheet**: Interactive negative film strip grid with sprocket holes and rebate numbers; click any frame to inspect or edit.
+### 4. Image Attachment (512×512 px Thumbnail)
+- Attach reference photos, test scans, or digital preview snaps to any frame.
+- Automatically center-crops and converts uploads to crisp 512px × 512px square thumbnails directly in-browser using HTML5 Canvas.
+- Displays as a darkroom test print pinned to the notebook page with full 512px lightbox inspection and contact sheet preview.
+
+### 5. Built-In Photography Darkroom Tools
+- **Darkroom Contact Sheet**: Interactive negative film strip grid with sprocket holes and rebate numbers; displays 512px thumbnails and exposure data. Click any frame to inspect or jump.
 - **Sunny 16 Exposure Meter**: Quick lighting condition guide (*Bright Sun, Hazy Sun, Overcast, Heavy Overcast, Golden Hour*) that computes and applies recommended aperture and shutter speed pairings.
 - **Roll Manager**: Create and organize rolls by camera body, stock, and format.
 - **Data Export & Print**: Export formatted field notes to clipboard, download CSV spreadsheets for darkroom records, or print contact sheets.
 
-### 5. Multi-Device Experience
+### 6. Multi-Device Experience
 - **iOS Mode**: iPhone chassis with Dynamic Island and native status bar.
 - **Android Mode**: Modern Pixel chassis with centered camera punch-hole.
 - **Desk View**: Fullscreen open dual-page journal spread.

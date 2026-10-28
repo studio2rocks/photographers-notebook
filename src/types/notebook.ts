@@ -12,6 +12,7 @@ export interface PhotographyLogEntry {
   filmSpeed: string;   // Line 6: Film speed
   personalNote: string;// Line 7: Personal note
   handwritingImageData?: string; // Stored canvas ink drawing data URL
+  imageAttachment?: string; // 512x512 thumbnail data URL
   inputMethod?: 'manual' | 'speech' | 'handwriting';
   updatedAt: string;
 }
