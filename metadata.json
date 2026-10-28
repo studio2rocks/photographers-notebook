@@ -1,0 +1,11 @@
+{
+  "name": "Analog Field Notes - Photography Tracking Notebook",
+  "description": "Tactile photography tracking notebook for analog film exposures. Log date, location, time, f-stop, shutter speed, film speed, and personal notes via manual text, speech-to-text, or handwriting recognition.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

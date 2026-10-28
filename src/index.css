@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --notebook-paper: #fbf7ee;
+    --notebook-lines: #d9d2c2;
+    --notebook-margin: #e89587;
+    --ink-black: #1f1d1a;
+    --ink-fountain-blue: #1c3b57;
+    --ink-pencil: #44403c;
+  }
+
+  body {
+    background-color: #1a1614;
+    color: #26221f;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Notebook paper ruling lines effect */
+.notebook-ruled-page {
+  background-color: #faf5eb;
+  background-image: 
+    linear-gradient(90deg, transparent 46px, rgba(220, 90, 80, 0.45) 46px, rgba(220, 90, 80, 0.45) 48px, transparent 48px),
+    linear-gradient(#e5dec9 1px, transparent 1px);
+  background-size: 100% 100%, 100% 36px;
+  background-position: 0 0, 0 18px;
+}
+
+/* Subtle dot grid for notes / sketch section */
+.notebook-dot-grid {
+  background-color: #f8f3e6;
+  background-image: radial-gradient(#d3cbb7 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+/* Handwritten font styling */
+.font-handwriting {
+  font-family: 'Caveat', cursive, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* Field typewriter font */
+.font-typewriter {
+  font-family: 'Courier Prime', 'Space Mono', monospace;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 120, 95, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 120, 95, 0.5);
+}
