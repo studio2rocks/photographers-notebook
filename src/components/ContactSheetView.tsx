@@ -17,7 +17,9 @@ export const ContactSheetView: React.FC<ContactSheetViewProps> = ({
   onSelectFrame,
   onClose,
 }) => {
-  const frameNumbers = Array.from({ length: roll.totalFrames }, (_, i) => i + 1);
+  const maxFrameLogged = entries.reduce((max, e) => Math.max(max, e.frameNumber), 0);
+  const displayCount = Math.max(36, maxFrameLogged + 4, currentFrame + 2);
+  const frameNumbers = Array.from({ length: displayCount }, (_, i) => i + 1);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-sm animate-in fade-in">
@@ -31,7 +33,7 @@ export const ContactSheetView: React.FC<ContactSheetViewProps> = ({
                 DARKROOM CONTACT SHEET · {roll.name.toUpperCase()}
               </h3>
               <p className="text-[11px] text-stone-400 font-mono">
-                {roll.filmStock} · {roll.camera} · {entries.length} / {roll.totalFrames} exposures logged
+                {roll.filmStock} · {roll.camera} · {entries.length} exposures logged (Unlimited)
               </p>
             </div>
           </div>
@@ -133,8 +135,8 @@ export const ContactSheetView: React.FC<ContactSheetViewProps> = ({
               <div key={i} className="w-2.5 h-3.5 bg-stone-900 rounded-xs border border-stone-800" />
             ))}
           </div>
-          <span className="text-[10px] text-stone-500 font-mono">
-            {roll.totalFrames} FRAMES TOTAL
+          <span className="text-[10px] text-amber-500/80 font-mono">
+            ∞ UNLIMITED CONTINUOUS EXPOSURES
           </span>
         </div>
       </div>

@@ -186,19 +186,18 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
             <input
               type="number"
               min={1}
-              max={totalFrames}
               value={entry.frameNumber}
               onChange={e => {
                 const val = parseInt(e.target.value, 10);
-                if (!isNaN(val)) {
+                if (!isNaN(val) && val >= 1) {
                   if (onJumpToFrame) onJumpToFrame(val);
                   else onUpdateEntry({ frameNumber: val });
                 }
               }}
-              title="Click or type to change Frame Number"
-              className="w-10 bg-[#25201b] border border-amber-800/60 rounded text-center text-amber-300 font-bold font-mono focus:bg-black focus:outline-none focus:ring-1 focus:ring-amber-500 py-0.5"
+              title="Click or type to change Frame Number (unlimited exposures)"
+              className="w-11 bg-[#25201b] border border-amber-800/60 rounded text-center text-amber-300 font-bold font-mono focus:bg-black focus:outline-none focus:ring-1 focus:ring-amber-500 py-0.5"
             />
-            <span className="text-stone-500 font-normal">/ {totalFrames}</span>
+            <span className="text-amber-500/80 font-mono text-[10px]">· ∞</span>
           </div>
 
           <div className="flex items-center gap-1 text-stone-300">
@@ -299,17 +298,16 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
                     <Focus className="w-3 h-3 text-amber-900" />
                     FRAME
                   </span>
-                  <span className="text-[10px] text-stone-400">of {totalFrames}</span>
+                  <span className="text-[10px] text-amber-900 font-bold">∞ Unlimited</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <input
                     type="number"
                     min={1}
-                    max={totalFrames}
                     value={entry.frameNumber}
                     onChange={e => {
                       const val = parseInt(e.target.value, 10);
-                      if (!isNaN(val)) {
+                      if (!isNaN(val) && val >= 1) {
                         if (onJumpToFrame) onJumpToFrame(val);
                         else onUpdateEntry({ frameNumber: val });
                       }
@@ -834,8 +832,7 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({
 
         <button
           onClick={onNextFrame}
-          disabled={entry.frameNumber >= totalFrames}
-          className="min-h-[44px] px-3.5 rounded-xl bg-amber-900 text-white hover:bg-amber-800 disabled:opacity-30 disabled:pointer-events-none text-xs font-semibold flex items-center gap-1 shadow-sm transition-all active:scale-95"
+          className="min-h-[44px] px-3.5 rounded-xl bg-amber-900 text-white hover:bg-amber-800 text-xs font-semibold flex items-center gap-1 shadow-sm transition-all active:scale-95"
         >
           <span>Next</span>
           <ChevronRight className="w-4 h-4" />

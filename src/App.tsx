@@ -142,25 +142,20 @@ export default function App() {
   };
 
   const handleNextFrame = () => {
-    if (activeFrameNumber < activeRoll.totalFrames) {
-      setActiveFrameNumber(activeFrameNumber + 1);
-    }
+    setActiveFrameNumber(activeFrameNumber + 1);
   };
 
-  // Add new exposure (jump to next empty frame)
+  // Add new exposure (jump to next empty frame or next number)
   const handleAddNewExposure = () => {
     const rollEntries = entries.filter(e => e.rollId === activeRoll.id);
     const loggedNumbers = new Set(rollEntries.map(e => e.frameNumber));
     
-    // Find first unexposed frame
-    for (let i = 1; i <= activeRoll.totalFrames; i++) {
-      if (!loggedNumbers.has(i)) {
-        setActiveFrameNumber(i);
-        return;
-      }
+    // Find next unexposed frame
+    let nextNum = 1;
+    while (loggedNumbers.has(nextNum)) {
+      nextNum++;
     }
-    // If all full, go to end or stay
-    setActiveFrameNumber(activeRoll.totalFrames);
+    setActiveFrameNumber(nextNum);
   };
 
   // Handle creating new roll
@@ -280,12 +275,12 @@ export default function App() {
           <NotebookPage
             roll={activeRoll}
             entry={currentEntry}
-            totalFrames={activeRoll.totalFrames}
+            totalFrames={activeRoll.totalFrames || 36}
             onUpdateEntry={handleUpdateEntry}
             onPrevFrame={handlePrevFrame}
             onNextFrame={handleNextFrame}
             onJumpToFrame={num => {
-              const clamped = Math.max(1, Math.min(num, activeRoll.totalFrames));
+              const clamped = Math.max(1, num);
               setActiveFrameNumber(clamped);
             }}
             onOpenHandwriting={() => setShowHandwritingModal(true)}

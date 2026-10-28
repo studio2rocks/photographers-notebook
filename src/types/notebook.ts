@@ -1,7 +1,7 @@
 export interface PhotographyLogEntry {
   id: string;
   rollId: string;
-  frameNumber: number; // 1 to 36 (editable)
+  frameNumber: number; // 1, 2, 3... unlimited exposures
   camera?: string;     // Camera input (e.g. Leica M6)
   lens?: string;       // Lens input (e.g. 35mm f/2 Summicron)
   date: string;        // Line 1: Date
@@ -22,7 +22,8 @@ export interface FilmRoll {
   camera: string;
   filmStock: string;
   iso: string;
-  totalFrames: number;
+  totalFrames?: number;
+  isUnlimited?: boolean; // Unlimited exposures
   startDate: string;
   completedDate?: string;
   isArchived?: boolean;
